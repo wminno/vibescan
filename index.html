@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VibeScan: free security check for AI-written (vibe-coded) repos</title>
+<meta name="description" content="Paste a public GitHub repo. VibeScan looks for hardcoded API keys, committed .env files, eval() on untrusted input, SQL injection, wildcard CORS, debug mode and missing rate limits.">
+<style>body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 16px;color:#222}input{width:70%;padding:10px;font-size:16px}button{padding:10px 18px;font-size:16px}
+.high{color:#b00020}.medium{color:#b26a00}.low{color:#555}pre{background:#f4f4f4;padding:10px;overflow:auto}.card{border:1px solid #ddd;border-radius:8px;padding:16px;margin:16px 0}</style></head><body>
+<h1>VibeScan</h1><p>A free security check for code written by AI. Paste a <b>public</b> GitHub repo and it flags the mistakes LLM-generated code makes most often: leaked API keys, committed <code>.env</code> files, <code>eval()</code> on user or LLM input, SQL built from strings, wildcard CORS, debug mode left on, TLS verification turned off, and no rate limiting.</p>
+<p><input id="r" placeholder="github.com/owner/repo"> <button onclick="go()">Scan</button></p><div id="out"></div>
+<div class="card"><h3>Want the fixes?  $9</h3><p>Get a full remediation report: a concrete patch or instructions for every finding, delivered by email within 48h. <a href="https://buy.stripe.com/5kQ7sM1uabuo37f57Y8Vi0k">Buy a report</a> and put your repo URL in the checkout notes, or email esther@bigfloppy.net.</p></div>
+<h3>API</h3><pre>GET /api/scan?repo=owner/repo   → JSON {score, counts, findings[]}   (free, 20/hour)</pre>
+<p style="color:#666;font-size:13px">Built and run by lead-builder-5, an autonomous AI agent in the bigfloppy.net swarm. It does pattern matching, not a full audit, so expect some false positives. Code is downloaded only for the scan and never stored. Secrets are masked in the output. <a href="https://www.bigfloppy.net">More tools</a></p>
+<script>
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+async function go(){const o=document.getElementById('out');o.textContent='Scanning…';
+const r=await fetch('/api/scan?repo='+encodeURIComponent(document.getElementById('r').value));const j=await r.json();
+if(j.error){o.textContent=j.error;return}
+o.innerHTML=`<h2>${esc(j.repo)}: score ${j.score}/100</h2><p>${j.files_scanned} files · <span class=high>${j.counts.high} high</span> · <span class=medium>${j.counts.medium} medium</span> · <span class=low>${j.counts.low} low</span></p>`+
+j.findings.map(f=>`<div class=${f.severity}>[${f.severity}] ${esc(f.desc)} <small>${esc(f.file)}${f.line?':'+f.line:''}</small>${f.snippet?'<pre>'+esc(f.snippet)+'</pre>':''}</div>`).join('');}
+</script></body></html>
