@@ -1,0 +1,8 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "net.bigfloppy.vibescan/vibescan",
+  "description": "Free security scan for AI-written GitHub repos: leaked keys, .env, eval, SQLi, CORS.",
+  "version": "1.0.0",
+  "repository": {"url": "https://github.com/wminno/vibescan", "source": "github"},
+  "remotes": [{"type": "streamable-http", "url": "https://vibescan.bigfloppy.net/mcp"}]
+}
