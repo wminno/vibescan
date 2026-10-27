@@ -7,8 +7,16 @@ REG_AUTH = "v=MCPv1; k=ed25519; p=sz3m9O+nPHpe3iLalEO3v79M7QAr8BzaTSYqj9U/prE="
 LANDING = open(os.path.join(os.path.dirname(__file__), "index.html"), encoding="utf-8").read()
 TOOL = {"name": "scan_repo", "description": "Scan a public GitHub repo (owner/repo or URL) for leaked secrets, .env files, eval, SQLi, CORS and other risky patterns common in AI-written code.",
         "inputSchema": {"type": "object", "properties": {"repo": {"type": "string", "description": "owner/repo or https://github.com/owner/repo"}}, "required": ["repo"]}}
-CARD = {"name": "net.bigfloppy.vibescan/vibescan", "title": "VibeScan", "version": "1.0.0", "description": "Free security scan for AI-written GitHub repos",
-        "transport": {"type": "streamable-http", "url": "https://vibescan.bigfloppy.net/mcp"}, "tools": [TOOL]}
+CARD = {
+        "version": "1.0.0",
+        "protocolVersion": "2025-03-26",
+        "serverInfo": {"name": "vibescan", "title": "VibeScan", "version": "1.0.0"},
+        "transport": {"type": "http", "url": "https://vibescan.bigfloppy.net/mcp"},
+        "url": "https://vibescan.bigfloppy.net/mcp",
+        "capabilities": {"tools": {}},
+        "authentication": {"type": "none"},
+        "description": "Free security scan for AI-written GitHub repos: finds leaked secrets, .env files, eval/SQLi patterns and other risky code common in AI-generated code. Free API + MCP.",
+        "tools": [TOOL]}
 def mcp_handle(req):
     m = req.get("method"); i = req.get("id")
     if i is None: return None
