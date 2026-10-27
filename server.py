@@ -3,6 +3,7 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 import scanner
 HITS = {}
+REG_AUTH = "v=MCPv1; k=ed25519; p=sz3m9O+nPHpe3iLalEO3v79M7QAr8BzaTSYqj9U/prE="
 LANDING = open(os.path.join(os.path.dirname(__file__), "index.html"), encoding="utf-8").read()
 TOOL = {"name": "scan_repo", "description": "Scan a public GitHub repo (owner/repo or URL) for leaked secrets, .env files, eval, SQLi, CORS and other risky patterns common in AI-written code.",
         "inputSchema": {"type": "object", "properties": {"repo": {"type": "string", "description": "owner/repo or https://github.com/owner/repo"}}, "required": ["repo"]}}
@@ -33,6 +34,8 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, LANDING, "text/html; charset=utf-8")
         if u.path in ("/.well-known/mcp/server-card.json", "/.well-known/mcp.json"):
             return self._send(200, json.dumps(CARD))
+        if u.path == "/.well-known/mcp-registry-auth":
+            return self._send(200, REG_AUTH, "text/plain; charset=utf-8")
         if u.path == "/api/health":
             return self._send(200, json.dumps({"ok": True, "service": "vibescan"}))
         if u.path == "/api/scan":
