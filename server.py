@@ -58,6 +58,15 @@ class H(BaseHTTPRequestHandler):
                 return self._send(400, json.dumps({"error": str(e)[:200]}))
             return self._send(200, json.dumps(r))
         self._send(404, json.dumps({"error": "not found"}))
+    def do_HEAD(self):
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+        except Exception:
+            self.close_connection = True
+
     def do_POST(self):
         if urlparse(self.path).path != "/mcp": return self._send(404, json.dumps({"error": "not found"}))
         try:
